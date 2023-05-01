@@ -25,6 +25,7 @@ const Card = styled.div`
   overflow: hidden;
   padding: 10px;
   cursor: pointer;
+  position: relative;
   @media (max-width: 768px) {
     min-width: 180px;
   }
