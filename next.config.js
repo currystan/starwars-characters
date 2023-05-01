@@ -9,7 +9,7 @@ module.exports = {
     return [
       {
         // matching all API routes
-        source: "/api/:path*",
+        source: "/extApi/:path*",
         headers: [
           { key: "Access-Control-Allow-Credentials", value: "true" },
           {
@@ -32,7 +32,7 @@ module.exports = {
   async rewrites() {
     return [
       {
-        source: "/api/characters",
+        source: "/extApi/characters",
         destination:
           "https://develop.d3t5w79d05f5ds.amplifyapp.com/api/characters",
       },

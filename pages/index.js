@@ -139,7 +139,7 @@ function Home() {
 
   useEffect(async () => {
     setLoading(true);
-    await fetch("/api/characters", requestOptions)
+    await fetch("/extApi/characters", requestOptions)
       .then((res) => res.json())
       .then((data) => {
         setData(data);
