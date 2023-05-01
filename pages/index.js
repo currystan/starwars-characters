@@ -1,6 +1,7 @@
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
+import { AiFillHeart, AiOutlineHeart, AiFillDelete } from "react-icons/ai";
 
 const Main = styled.div`
   height: 100%;
@@ -57,6 +58,9 @@ const CharacerInfo = styled.div`
   padding: 20px;
   background-color: #333;
   border-radius: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 `;
 
 const InfoData = styled.div`
@@ -73,8 +77,12 @@ const InfoContent = styled.div`
   padding: 10px;
 `;
 
+const ActionContainer = styled.div`
+  justify-self: flex-end;
+`;
+
 const characterCard = ({ data, isSelected, selectCharacter }) => {
-  const { image, name } = data;
+  const { image, name, is_fave } = data;
   return (
     <Card
       isSelected={isSelected}
@@ -83,6 +91,17 @@ const characterCard = ({ data, isSelected, selectCharacter }) => {
         selectCharacter(name);
       }}
     >
+      {is_fave && (
+        <AiFillHeart
+          size="15px"
+          onClick={() => toggleFave(name)}
+          style={{
+            cursor: "pointer",
+            position: "absolute",
+          }}
+          color="red"
+        />
+      )}
       <CharacterImage src={image} />
       <CharacterName>{name}</CharacterName>
     </Card>
@@ -98,7 +117,7 @@ const Info = ({ value, label }) => {
   );
 };
 
-const CharacterInfo = ({ data }) => {
+const CharacterInfo = ({ data, toggleFave, deleteChar }) => {
   const {
     image,
     name,
@@ -109,19 +128,43 @@ const CharacterInfo = ({ data }) => {
     skin_color,
     eye_color,
     birth_year,
+    is_fave,
   } = data;
   return (
     <MainInfoContainer>
       <ImageContainer src={image} />
       <CharacerInfo>
-        <Info label={"Name"} value={name} />
-        <Info label={"Gender"} value={gender} />
-        <Info label={"Birth Year"} value={birth_year} />
-        <Info label={"Height"} value={`${height}cm`} />
-        <Info label={"Weight"} value={`${mass}kg`} />
-        <Info label={"Hair Color"} value={hair_color} />
-        <Info label={"Skin Color"} value={skin_color} />
-        <Info label={"Eye Color"} value={eye_color} />
+        <div>
+          <Info label={"Name"} value={name} />
+          <Info label={"Gender"} value={gender} />
+          <Info label={"Birth Year"} value={birth_year} />
+          <Info label={"Height"} value={`${height}cm`} />
+          <Info label={"Weight"} value={`${mass}kg`} />
+          <Info label={"Hair Color"} value={hair_color} />
+          <Info label={"Skin Color"} value={skin_color} />
+          <Info label={"Eye Color"} value={eye_color} />
+        </div>
+        <ActionContainer>
+          {is_fave ? (
+            <AiFillHeart
+              size="20px"
+              onClick={() => toggleFave(name)}
+              style={{ cursor: "pointer" }}
+              color="red"
+            />
+          ) : (
+            <AiOutlineHeart
+              size="20px"
+              onClick={() => toggleFave(name)}
+              style={{ cursor: "pointer" }}
+            />
+          )}
+          <AiFillDelete
+            size="20px"
+            onClick={() => deleteChar(name)}
+            style={{ cursor: "pointer", paddingLeft: "10px" }}
+          />
+        </ActionContainer>
       </CharacerInfo>
     </MainInfoContainer>
   );
@@ -138,30 +181,59 @@ function Home() {
   };
 
   useEffect(async () => {
-    setLoading(true);
-    await fetch("/extApi/characters", requestOptions)
-      .then((res) => res.json())
-      .then((data) => {
-        setData(data);
-        setLoading(false);
-      });
+    if (!data) {
+      setLoading(true);
+      await fetch("/extApi/characters", requestOptions)
+        .then((res) => res.json())
+        .then((data) => {
+          setData(data);
+          setLoading(false);
+        });
+    }
   }, []);
+
+  const toggleFave = (name) => {
+    let newData = [...data];
+    newData.forEach((char) => {
+      if (char.name == name) {
+        char.is_fave = !!!char.is_fave;
+      }
+    });
+    setData(newData);
+    setSelected(name);
+  };
+
+  const deleteChar = (name) => {
+    let newData = [...data];
+    newData = newData.filter((char) => char.name != name);
+    console.log(newData);
+    setData(newData);
+    setSelected("");
+  };
 
   return (
     <>
       <Main>
         <TopSection>
-          {(data ?? []).map((e) =>
-            characterCard({
-              data: e,
-              isSelected: e.name == selected,
-              selectCharacter: setSelected,
+          {(data ?? [])
+            .sort((a, b) => {
+              return a.is_fave === b.is_fave ? 0 : a.is_fave ? -1 : 1;
             })
-          )}
+            .map((e) =>
+              characterCard({
+                data: e,
+                isSelected: e.name == selected,
+                selectCharacter: setSelected,
+              })
+            )}
         </TopSection>
         <BottomSection>
           {selected && (
-            <CharacterInfo data={data.filter((e) => e.name == selected)[0]} />
+            <CharacterInfo
+              data={data.filter((e) => e.name == selected)[0]}
+              toggleFave={toggleFave}
+              deleteChar={deleteChar}
+            />
           )}
         </BottomSection>
       </Main>
