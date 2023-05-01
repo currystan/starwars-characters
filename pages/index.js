@@ -170,27 +170,10 @@ const CharacterInfo = ({ data, toggleFave, deleteChar }) => {
   );
 };
 
-function Home() {
-  const [data, setData] = useState(null);
+function Home(props) {
+  const [data, setData] = useState(props.data);
   const [selected, setSelected] = useState("");
   const [isLoading, setLoading] = useState(false);
-
-  const requestOptions = {
-    method: "GET",
-    headers: { "Content-Type": "application/json" },
-  };
-
-  useEffect(async () => {
-    if (!data) {
-      setLoading(true);
-      await fetch("/extApi/characters", requestOptions)
-        .then((res) => res.json())
-        .then((data) => {
-          setData(data);
-          setLoading(false);
-        });
-    }
-  }, []);
 
   const toggleFave = (name) => {
     let newData = [...data];
@@ -242,3 +225,21 @@ function Home() {
 }
 
 export default Home;
+
+export async function getStaticProps() {
+  const requestOptions = {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  };
+  const res = await fetch(
+    "https://develop.d3t5w79d05f5ds.amplifyapp.com/api/characters",
+    requestOptions
+  );
+  const data = await res.json();
+
+  return {
+    props: {
+      data,
+    },
+  };
+}
