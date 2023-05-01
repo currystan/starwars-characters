@@ -132,9 +132,14 @@ function Home() {
   const [selected, setSelected] = useState("");
   const [isLoading, setLoading] = useState(false);
 
+  const requestOptions = {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  };
+
   useEffect(async () => {
     setLoading(true);
-    await fetch("/api/characters")
+    await fetch("/api/characters", requestOptions)
       .then((res) => res.json())
       .then((data) => {
         setData(data);
