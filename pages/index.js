@@ -88,8 +88,6 @@ const ActionContainer = styled.div`
   justify-self: flex-end;
 `;
 
-const HeartIcon = styled(AiOutlineHeart)``;
-
 const characterCard = ({ data, isSelected, selectCharacter }) => {
   const { image, name, is_fave } = data;
   return (
@@ -162,7 +160,11 @@ const CharacterInfo = ({ data, toggleFave, deleteChar }) => {
               color="red"
             />
           ) : (
-            <HeartIcon size="2em" onClick={() => toggleFave(name)} />
+            <AiOutlineHeart
+              size="2em"
+              onClick={() => toggleFave(name)}
+              style={{ cursor: "pointer" }}
+            />
           )}
           <AiFillDelete
             size="2em"
