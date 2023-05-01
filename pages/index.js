@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import { AiFillHeart, AiOutlineHeart, AiFillDelete } from "react-icons/ai";
 
@@ -25,10 +25,16 @@ const Card = styled.div`
   overflow: hidden;
   padding: 10px;
   cursor: pointer;
+  @media (max-width: 768px) {
+    min-width: 180px;
+  }
 `;
 
 const CharacterImage = styled.img`
   width: 120px;
+  @media (max-width: 768px) {
+    width: 180px;
+  }
 `;
 
 const CharacterName = styled.div``;
@@ -61,6 +67,9 @@ const CharacerInfo = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  @media (max-width: 768px) {
+    font-size: 30px;
+  }
 `;
 
 const InfoData = styled.div`
@@ -81,6 +90,8 @@ const ActionContainer = styled.div`
   justify-self: flex-end;
 `;
 
+const HeartIcon = styled(AiOutlineHeart)``;
+
 const characterCard = ({ data, isSelected, selectCharacter }) => {
   const { image, name, is_fave } = data;
   return (
@@ -93,7 +104,7 @@ const characterCard = ({ data, isSelected, selectCharacter }) => {
     >
       {is_fave && (
         <AiFillHeart
-          size="15px"
+          size="25px"
           onClick={() => toggleFave(name)}
           style={{
             cursor: "pointer",
@@ -147,20 +158,16 @@ const CharacterInfo = ({ data, toggleFave, deleteChar }) => {
         <ActionContainer>
           {is_fave ? (
             <AiFillHeart
-              size="20px"
+              size="2em"
               onClick={() => toggleFave(name)}
               style={{ cursor: "pointer" }}
               color="red"
             />
           ) : (
-            <AiOutlineHeart
-              size="20px"
-              onClick={() => toggleFave(name)}
-              style={{ cursor: "pointer" }}
-            />
+            <HeartIcon size="2em" onClick={() => toggleFave(name)} />
           )}
           <AiFillDelete
-            size="20px"
+            size="2em"
             onClick={() => deleteChar(name)}
             style={{ cursor: "pointer", paddingLeft: "10px" }}
           />
@@ -189,13 +196,15 @@ function Home(props) {
   const deleteChar = (name) => {
     let newData = [...data];
     newData = newData.filter((char) => char.name != name);
-    console.log(newData);
     setData(newData);
     setSelected("");
   };
 
   return (
     <>
+      <Head>
+        <title>Star Wars Characters</title>
+      </Head>
       <Main>
         <TopSection>
           {(data ?? [])
