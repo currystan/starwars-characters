@@ -37,8 +37,6 @@ const CharacterImage = styled.img`
   }
 `;
 
-const CharacterName = styled.div``;
-
 const BottomSection = styled.div`
   padding: 20px;
 `;
@@ -114,7 +112,7 @@ const characterCard = ({ data, isSelected, selectCharacter }) => {
         />
       )}
       <CharacterImage src={image} />
-      <CharacterName>{name}</CharacterName>
+      <div>{name}</div>
     </Card>
   );
 };
