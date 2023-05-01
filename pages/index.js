@@ -1,4 +1,3 @@
-import axios from "axios";
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
@@ -135,10 +134,12 @@ function Home() {
 
   useEffect(async () => {
     setLoading(true);
-    await axios("/api/characters").then((data) => {
-      setData(data);
-      setLoading(false);
-    });
+    await fetch("/api/characters")
+      .then((res) => res.json())
+      .then((data) => {
+        setData(data);
+        setLoading(false);
+      });
   }, []);
 
   return (
